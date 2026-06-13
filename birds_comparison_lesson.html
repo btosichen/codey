@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birds Comparison | 互動學習單</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Nunito', 'sans-serif'] },
+                    colors: {
+                        sky: { 100: '#E0F2FE', 300: '#7DD3FC', 500: '#0EA5E9', 700: '#0369A1' },
+                        mint: { 100: '#D1FAE5', 400: '#34D399', 600: '#059669' },
+                        orange: { 100: '#FFEDD5', 400: '#FB923C', 500: '#F97316' },
+                        yellow: { 100: '#FEF9C3', 300: '#FDE047', 500: '#EAB308' },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Nunito', sans-serif; background-color: #F8FAFC; }
+        
+        /* Language Toggle Logic */
+        .lang-en .tw-text { display: none !important; }
+        .lang-tw .en-text { display: none !important; }
+
+        /* Flip Card Styles */
+        .flip-card { perspective: 1000px; cursor: pointer; }
+        .flip-card-inner {
+            position: relative; width: 100%; height: 100%;
+            transition: transform 0.6s; transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            position: absolute; width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            border-radius: 1rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); font-weight: bold; font-size: 1.125rem;
+        }
+        .flip-card-front { background-color: #E0F2FE; color: #0369A1; border: 2px solid #7DD3FC; }
+        .flip-card-back { background-color: #7DD3FC; color: #0369A1; transform: rotateY(180deg); border: 2px solid #0EA5E9; }
+
+        /* Custom UI tweaks */
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+        
+        /* Scratch Block Styles */
+        .block-event { background-color: #EAB308; border-radius: 12px 12px 0 0; padding: 10px 16px; color: white; font-weight: bold; width: fit-content; }
+        .block-action { background-color: #0EA5E9; padding: 10px 16px; color: white; width: fit-content; margin-left: 16px; }
+        .block-logic { background-color: #F97316; padding: 10px 16px; color: white; width: fit-content; margin-left: 16px; }
+        .block-end { background-color: #F97316; border-radius: 0 0 12px 12px; height: 16px; width: 150px; margin-left: 16px; }
+
+        /* SVG Bird Bird */
+        .bird-svg { width: 80px; height: 80px; }
+    </style>
+</head>
+<body class="h-screen w-full flex items-center justify-center p-2 sm:p-6 text-gray-800">
+
+    <!-- Main Presentation Container -->
+    <div id="app" class="lang-en w-full max-w-6xl aspect-video bg-white rounded-[2rem] card-shadow flex flex-col overflow-hidden relative">
+        
+        <!-- Header -->
+        <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 z-20">
+            <div class="flex items-center gap-3">
+                <i class="ph-fill ph-bird text-3xl text-orange-500"></i>
+                <h1 class="text-2xl font-extrabold text-gray-700 tracking-wide">
+                    <span class="en-text">Birds Comparison</span>
+                    <span class="tw-text">鳥鳥比大小</span>
+                </h1>
+            </div>
+            <button onclick="toggleLanguage()" class="flex items-center gap-2 bg-sky-100 hover:bg-sky-200 text-sky-700 px-4 py-2 rounded-full font-bold transition-colors shadow-sm">
+                <i class="ph ph-translate text-xl"></i>
+                <span id="lang-btn-text">EN / 中文</span>
+            </button>
+        </header>
+
+        <!-- Pages Container -->
+        <main id="pages-container" class="flex-1 relative bg-gray-50">
+            
+            <!-- PAGE 1: Game Intro -->
+            <div class="page absolute inset-0 flex p-6 gap-6 hidden" id="page-1">
+                <!-- Look Section -->
+                <div class="w-7/12 bg-mint-100 rounded-3xl p-6 flex flex-col shadow-inner relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-mint-400 text-white px-4 py-1 rounded-bl-xl font-bold">👀 Look</div>
+                    <div class="flex-1 flex flex-col items-center justify-center gap-8 mt-4">
+                        <div class="flex items-center justify-center gap-8 w-full">
+                            <!-- Card 1 -->
+                            <div class="bg-white w-40 h-56 rounded-2xl shadow-lg border-4 border-mint-400 flex flex-col items-center justify-between p-4">
+                                <span class="text-4xl font-bold text-gray-700 self-start">8</span>
+                                <i class="ph-fill ph-bird text-6xl text-orange-400"></i>
+                                <span class="text-4xl font-bold text-gray-700 self-end rotate-180">8</span>
+                            </div>
+                            <!-- Center VS -->
+                            <div class="flex flex-col items-center gap-4 text-5xl font-extrabold text-orange-500">
+                                <span>&gt;</span>
+                                <span>&lt;</span>
+                                <span>=</span>
+                                <div class="text-6xl mt-4">🤖</div>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="bg-white w-40 h-56 rounded-2xl shadow-lg border-4 border-sky-400 flex flex-col items-center justify-between p-4">
+                                <span class="text-4xl font-bold text-gray-700 self-start">?</span>
+                                <i class="ph-fill ph-bird text-6xl text-sky-500"></i>
+                                <span class="text-4xl font-bold text-gray-700 self-end rotate-180">?</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Interactive Sidebar -->
+                <div class="w-5/12 flex flex-col gap-4">
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1">
+                        <h3 class="font-bold text-lg text-gray-500 mb-2 flex items-center gap-2"><i class="ph-fill ph-cards text-sky-500"></i> Key Words</h3>
+                        <div class="grid grid-cols-2 gap-3 h-24">
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">bird</div><div class="flip-card-back">鳥</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">card</div><div class="flip-card-back">牌</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">number</div><div class="flip-card-back">數字</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">compare</div><div class="flip-card-back">比較</div></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-orange-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-orange-600 mb-2 flex items-center gap-2"><i class="ph-fill ph-lightbulb"></i> Think</h3>
+                        <p class="text-xl font-bold text-gray-800"><span class="en-text">What do you see?</span><span class="tw-text">你看到了什麼？</span></p>
+                    </div>
+                    <div class="bg-sky-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-sky-600 mb-2 flex items-center gap-2"><i class="ph-fill ph-chats-circle"></i> Talk</h3>
+                        <p class="text-xl font-bold text-gray-800">I see <input type="text" class="bg-white border-b-4 border-sky-400 w-32 px-2 focus:outline-none rounded-t text-center" placeholder="____"> .</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 2: Compare Numbers -->
+            <div class="page absolute inset-0 flex p-6 gap-6 hidden" id="page-2">
+                <div class="w-7/12 bg-orange-100 rounded-3xl p-6 flex flex-col shadow-inner relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-orange-400 text-white px-4 py-1 rounded-bl-xl font-bold">👀 Look</div>
+                    <div class="flex-1 flex items-center justify-center gap-6 mt-4">
+                        <div class="bg-white w-48 h-64 rounded-2xl shadow-lg border-4 border-gray-300 flex items-center justify-center">
+                            <span class="text-8xl font-black text-gray-800">6</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-4">
+                            <button onclick="reveal('p2-ans')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-md transition-transform active:scale-95">
+                                <span class="en-text">Compare!</span><span class="tw-text">比比看！</span>
+                            </button>
+                            <span id="p2-ans" class="text-6xl font-black text-orange-600 opacity-0 transition-opacity duration-500">&lt;</span>
+                        </div>
+                        <div class="bg-white w-48 h-64 rounded-2xl shadow-lg border-4 border-gray-300 flex items-center justify-center">
+                            <span class="text-8xl font-black text-gray-800">10</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-5/12 flex flex-col gap-4">
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1">
+                        <h3 class="font-bold text-lg text-gray-500 mb-2"><i class="ph-fill ph-cards text-sky-500"></i> Key Words</h3>
+                        <div class="grid grid-cols-2 gap-3 h-24">
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">big</div><div class="flip-card-back">大</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">small</div><div class="flip-card-back">小</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">bigger</div><div class="flip-card-back">比較大</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">smaller</div><div class="flip-card-back">比較小</div></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-mint-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-mint-600 mb-2"><i class="ph-fill ph-lightbulb"></i> Think</h3>
+                        <p class="text-xl font-bold text-gray-800"><span class="en-text">Which number is bigger?</span><span class="tw-text">哪個數字比較大？</span></p>
+                    </div>
+                    <div class="bg-sky-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-sky-600 mb-2"><i class="ph-fill ph-chats-circle"></i> Talk</h3>
+                        <p class="text-xl font-bold text-gray-800 bg-white p-3 rounded-xl border-2 border-sky-200">10 is bigger.<br>6 is smaller.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 3: Card Parts -->
+            <div class="page absolute inset-0 flex p-6 gap-6 hidden" id="page-3">
+                <div class="w-7/12 bg-sky-100 rounded-3xl p-6 flex flex-col shadow-inner relative overflow-hidden items-center justify-center">
+                    <div class="absolute top-0 right-0 bg-sky-400 text-white px-4 py-1 rounded-bl-xl font-bold">👀 Look</div>
+                    
+                    <div class="relative mt-4">
+                        <div class="bg-white w-56 h-80 rounded-2xl shadow-xl border-4 border-sky-300 flex flex-col items-center justify-between p-6 relative">
+                            <span class="text-5xl font-black text-gray-800 self-start">7</span>
+                            <i class="ph-fill ph-bird text-8xl text-sky-500"></i>
+                            <span class="text-5xl font-black text-gray-800 self-end rotate-180">7</span>
+                        </div>
+                        
+                        <!-- Interactive Pointers -->
+                        <div class="absolute -top-4 -left-12 flex items-center gap-2">
+                            <button onclick="reveal('p3-number')" class="bg-yellow-400 font-bold px-3 py-1 rounded-full shadow hover:bg-yellow-500">Click</button>
+                            <div id="p3-number" class="bg-white px-3 py-1 rounded-lg shadow font-bold text-sky-600 opacity-0 transition-opacity">Number (數字)</div>
+                        </div>
+                        <div class="absolute top-1/2 -right-24 flex items-center gap-2 transform -translate-y-1/2">
+                            <div id="p3-pic" class="bg-white px-3 py-1 rounded-lg shadow font-bold text-orange-500 opacity-0 transition-opacity">Picture (圖案)</div>
+                            <button onclick="reveal('p3-pic')" class="bg-yellow-400 font-bold px-3 py-1 rounded-full shadow hover:bg-yellow-500">Click</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="w-5/12 flex flex-col gap-4">
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1">
+                        <h3 class="font-bold text-lg text-gray-500 mb-2"><i class="ph-fill ph-cards text-sky-500"></i> Key Words</h3>
+                        <div class="grid grid-cols-2 gap-3 h-24">
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">number</div><div class="flip-card-back">數字</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">picture</div><div class="flip-card-back">圖案</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">card</div><div class="flip-card-back">牌</div></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-orange-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-orange-600 mb-2"><i class="ph-fill ph-lightbulb"></i> Think</h3>
+                        <p class="text-xl font-bold text-gray-800"><span class="en-text">Where is the number?</span><span class="tw-text">數字在哪裡？</span></p>
+                    </div>
+                    <div class="bg-mint-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-mint-600 mb-2"><i class="ph-fill ph-chats-circle"></i> Talk</h3>
+                        <p class="text-xl font-bold text-gray-800">The number is <br><span class="bg-white px-2 py-1 rounded inline-block mt-2 text-sky-600 font-black">top</span> and <span class="bg-white px-2 py-1 rounded inline-block mt-2 text-sky-600 font-black">bottom</span>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 4: Predict the Rule -->
+            <div class="page absolute inset-0 flex p-6 gap-6 hidden" id="page-4">
+                <div class="w-7/12 bg-yellow-100 rounded-3xl p-6 flex flex-col shadow-inner relative overflow-hidden items-center justify-center">
+                    <div class="absolute top-0 right-0 bg-yellow-400 text-white px-4 py-1 rounded-bl-xl font-bold">👀 Look</div>
+                    
+                    <div class="flex items-center gap-6 w-full justify-center">
+                        <div class="text-center">
+                            <div class="bg-white w-32 h-48 rounded-xl shadow-lg border-4 border-mint-400 mb-2 flex items-center justify-center"><span class="text-6xl">🙋🏻‍♂️</span></div>
+                            <span class="font-bold text-lg bg-mint-200 px-3 py-1 rounded-full">My Card</span>
+                        </div>
+                        <div class="text-5xl font-black text-gray-400">VS</div>
+                        <div class="text-center">
+                            <div class="bg-white w-32 h-48 rounded-xl shadow-lg border-4 border-gray-400 mb-2 flex items-center justify-center"><span class="text-6xl">💻</span></div>
+                            <span class="font-bold text-lg bg-gray-200 px-3 py-1 rounded-full">Computer</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex gap-4 w-full justify-center">
+                        <button onclick="document.getElementById('p4-res').innerHTML='🎉 I WIN!'" class="bg-mint-400 hover:bg-mint-500 text-white font-bold py-3 px-6 rounded-xl shadow">My card is BIGGER</button>
+                        <button onclick="document.getElementById('p4-res').innerHTML='🤝 TIE!'" class="bg-sky-400 hover:bg-sky-500 text-white font-bold py-3 px-6 rounded-xl shadow">SAME</button>
+                        <button onclick="document.getElementById('p4-res').innerHTML='🌧 I LOSE!'" class="bg-orange-400 hover:bg-orange-500 text-white font-bold py-3 px-6 rounded-xl shadow">My card is SMALLER</button>
+                    </div>
+                    <div id="p4-res" class="mt-6 text-4xl font-black text-rose-500 h-10"></div>
+
+                </div>
+                <div class="w-5/12 flex flex-col gap-4">
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1">
+                        <h3 class="font-bold text-lg text-gray-500 mb-2"><i class="ph-fill ph-cards text-sky-500"></i> Key Words</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="flip-card h-12" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">my card</div><div class="flip-card-back text-sm">我的牌</div></div></div>
+                            <div class="flip-card h-12" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">computer</div><div class="flip-card-back text-sm">電腦</div></div></div>
+                            <div class="flip-card h-12" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">win</div><div class="flip-card-back text-sm">贏</div></div></div>
+                            <div class="flip-card h-12" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">lose</div><div class="flip-card-back text-sm">輸</div></div></div>
+                            <div class="flip-card h-12 col-span-2" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">tie</div><div class="flip-card-back text-sm">平手</div></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-mint-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-mint-600 mb-2"><i class="ph-fill ph-lightbulb"></i> Think</h3>
+                        <p class="text-xl font-bold text-gray-800"><span class="en-text">If my card is bigger, what happens?</span><span class="tw-text">如果我的牌比較大，會怎樣？</span></p>
+                    </div>
+                    <div class="bg-sky-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-sky-600 mb-2"><i class="ph-fill ph-chats-circle"></i> Talk</h3>
+                        <p class="text-xl font-bold text-gray-800">I <span class="text-mint-600">win</span>. / I <span class="text-orange-500">lose</span>. / It is a <span class="text-sky-600">tie</span>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 5: Computer's Card -->
+            <div class="page absolute inset-0 flex p-6 gap-6 hidden" id="page-5">
+                <div class="w-7/12 bg-sky-100 rounded-3xl p-6 flex flex-col shadow-inner relative overflow-hidden items-center justify-center">
+                    <div class="absolute top-0 right-0 bg-sky-400 text-white px-4 py-1 rounded-bl-xl font-bold">👀 Look</div>
+                    
+                    <div class="flex flex-col items-center">
+                        <div class="text-7xl mb-4">💻</div>
+                        <div class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-md border-2 border-sky-200">
+                            <span class="text-xl font-bold text-gray-600">Random (1-13)</span>
+                            <i class="ph-bold ph-arrow-right text-sky-400 text-2xl"></i>
+                            <div id="p5-card" class="bg-gray-100 w-24 h-32 rounded-lg border-2 border-dashed border-gray-400 flex items-center justify-center text-4xl font-black text-gray-300">?</div>
+                        </div>
+                        <button onclick="document.getElementById('p5-card').innerHTML = Math.floor(Math.random() * 13) + 1; document.getElementById('p5-card').classList.replace('text-gray-300','text-sky-600'); document.getElementById('p5-card').classList.replace('border-dashed','border-solid'); document.getElementById('p5-card').classList.replace('border-gray-400','border-sky-500');" class="mt-8 bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-8 rounded-full shadow-lg flex items-center gap-2">
+                            <i class="ph-bold ph-shuffle"></i> <span class="en-text">Get a Card</span><span class="tw-text">抽一張牌</span>
+                        </button>
+                    </div>
+
+                </div>
+                <div class="w-5/12 flex flex-col gap-4">
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1">
+                        <h3 class="font-bold text-lg text-gray-500 mb-2"><i class="ph-fill ph-cards text-sky-500"></i> Key Words</h3>
+                        <div class="grid grid-cols-2 gap-3 h-24">
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">computer</div><div class="flip-card-back">電腦</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">random</div><div class="flip-card-back">隨機</div></div></div>
+                            <div class="flip-card col-span-2" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">number</div><div class="flip-card-back">數字</div></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-orange-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-orange-600 mb-2"><i class="ph-fill ph-lightbulb"></i> Think</h3>
+                        <p class="text-xl font-bold text-gray-800"><span class="en-text">How does computer get a card?</span><span class="tw-text">電腦怎麼拿到牌？</span></p>
+                    </div>
+                    <div class="bg-mint-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-mint-600 mb-2"><i class="ph-fill ph-chats-circle"></i> Talk</h3>
+                        <p class="text-xl font-bold text-gray-800">Computer gets a <span class="bg-white px-2 rounded">random</span> number.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 6: My Card -->
+            <div class="page absolute inset-0 flex p-6 gap-6 hidden" id="page-6">
+                <div class="w-7/12 bg-mint-100 rounded-3xl p-6 flex flex-col shadow-inner relative overflow-hidden items-center justify-center">
+                    <div class="absolute top-0 right-0 bg-mint-400 text-white px-4 py-1 rounded-bl-xl font-bold">👀 Look</div>
+                    
+                    <div class="flex flex-col items-center gap-6">
+                        <div class="relative">
+                            <div class="text-8xl">🤖</div>
+                            <button onclick="document.getElementById('p6-card').classList.remove('hidden')" class="absolute bottom-0 right-0 bg-orange-500 hover:bg-orange-600 text-white font-black w-10 h-10 rounded-full shadow-lg border-2 border-white flex items-center justify-center active:scale-90">A</button>
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <span class="text-sm font-bold text-mint-700 bg-white px-3 py-1 rounded-full"><span class="en-text">Press A!</span><span class="tw-text">按下 A 鍵！</span></span>
+                            <i class="ph-bold ph-arrow-down text-mint-500 text-2xl"></i>
+                        </div>
+                        <div id="p6-card" class="hidden bg-white w-32 h-48 rounded-xl shadow-lg border-4 border-mint-400 flex flex-col items-center justify-between p-4 animation-bounce">
+                            <span class="text-3xl font-bold text-gray-700 self-start">9</span>
+                            <i class="ph-fill ph-bird text-5xl text-orange-400"></i>
+                            <span class="text-3xl font-bold text-gray-700 self-end rotate-180">9</span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="w-5/12 flex flex-col gap-4">
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1">
+                        <h3 class="font-bold text-lg text-gray-500 mb-2"><i class="ph-fill ph-cards text-sky-500"></i> Key Words</h3>
+                        <div class="grid grid-cols-2 gap-3 h-24">
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">button</div><div class="flip-card-back">按鈕</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">press</div><div class="flip-card-back">按</div></div></div>
+                            <div class="flip-card col-span-2" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">show</div><div class="flip-card-back">顯示</div></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-yellow-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-yellow-600 mb-2"><i class="ph-fill ph-lightbulb"></i> Think</h3>
+                        <p class="text-xl font-bold text-gray-800"><span class="en-text">How can I see my card?</span><span class="tw-text">我怎麼看到我的牌？</span></p>
+                    </div>
+                    <div class="bg-sky-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-sky-600 mb-2"><i class="ph-fill ph-chats-circle"></i> Talk</h3>
+                        <p class="text-xl font-bold text-gray-800">Press <span class="bg-white px-3 py-1 rounded-full text-orange-500 border border-orange-200">A</span>. Show card.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 7: Compare Logic -->
+            <div class="page absolute inset-0 flex p-6 gap-6 hidden" id="page-7">
+                <div class="w-7/12 bg-gray-100 rounded-3xl p-6 flex flex-col shadow-inner relative overflow-hidden items-center justify-center">
+                    <div class="absolute top-0 right-0 bg-gray-400 text-white px-4 py-1 rounded-bl-xl font-bold">👀 Look</div>
+                    
+                    <div class="w-full max-w-md">
+                        <div class="bg-orange-400 text-white text-center py-3 rounded-xl font-bold text-xl shadow mb-4">If My Card > Computer</div>
+                        <div class="flex justify-center mb-4"><i class="ph-bold ph-arrow-down text-orange-400 text-2xl"></i></div>
+                        <div class="bg-white border-2 border-orange-400 text-orange-500 text-center py-2 rounded-xl font-black text-2xl shadow mb-8">Show "WIN"</div>
+
+                        <div class="bg-sky-400 text-white text-center py-3 rounded-xl font-bold text-xl shadow mb-4">If My Card < Computer</div>
+                        <div class="flex justify-center mb-4"><i class="ph-bold ph-arrow-down text-sky-400 text-2xl"></i></div>
+                        <div class="bg-white border-2 border-sky-400 text-sky-500 text-center py-2 rounded-xl font-black text-2xl shadow">Show "LOSE"</div>
+                    </div>
+
+                </div>
+                <div class="w-5/12 flex flex-col gap-4">
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1">
+                        <h3 class="font-bold text-lg text-gray-500 mb-2"><i class="ph-fill ph-cards text-sky-500"></i> Key Words</h3>
+                        <div class="grid grid-cols-2 gap-3 h-24">
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">if</div><div class="flip-card-back">如果</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">bigger</div><div class="flip-card-back">比較大</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">smaller</div><div class="flip-card-back">比較小</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">same</div><div class="flip-card-back">一樣</div></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-mint-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-mint-600 mb-2"><i class="ph-fill ph-lightbulb"></i> Think</h3>
+                        <p class="text-xl font-bold text-gray-800"><span class="en-text">6 vs 10. What happens?</span><span class="tw-text">6 對決 10。發生什麼事？</span></p>
+                    </div>
+                    <div class="bg-orange-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-orange-600 mb-2"><i class="ph-fill ph-chats-circle"></i> Talk</h3>
+                        <p class="text-xl font-bold text-gray-800">I <span class="bg-white px-2 py-1 rounded">lose</span> !</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 8: Code Reveal -->
+            <div class="page absolute inset-0 flex p-6 gap-6 hidden" id="page-8">
+                <div class="w-7/12 bg-gray-800 rounded-3xl p-6 flex flex-col shadow-inner relative overflow-hidden items-start justify-center overflow-y-auto">
+                    <div class="absolute top-0 right-0 bg-yellow-400 text-gray-900 px-4 py-1 rounded-bl-xl font-bold">👀 Look</div>
+                    
+                    <div class="scale-90 origin-top-left font-mono">
+                        <div class="block-event">when button A is pressed</div>
+                        
+                        <div class="block-action mt-1">set [Computer Card] to (pick random 1 to 13)</div>
+                        <div class="block-action mt-1">set [My Card] to (pick random 1 to 13)</div>
+                        
+                        <div class="block-logic mt-2 rounded-t-xl">if &lt; (My Card) &gt; (Computer Card) &gt; then</div>
+                        <div class="block-action ml-10 mt-1 border-l-4 border-orange-500">show "WIN"</div>
+                        <div class="block-end mt-1"></div>
+
+                        <div class="block-logic mt-2 rounded-t-xl">if &lt; (My Card) &lt; (Computer Card) &gt; then</div>
+                        <div class="block-action ml-10 mt-1 border-l-4 border-orange-500">show "LOSE"</div>
+                        <div class="block-end mt-1"></div>
+                    </div>
+
+                </div>
+                <div class="w-5/12 flex flex-col gap-4">
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1">
+                        <h3 class="font-bold text-lg text-gray-500 mb-2"><i class="ph-fill ph-cards text-sky-500"></i> Key Words</h3>
+                        <div class="grid grid-cols-2 gap-3 h-24">
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">if</div><div class="flip-card-back">如果</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">variable</div><div class="flip-card-back text-sm">變數</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">message</div><div class="flip-card-back text-sm">訊息</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">result</div><div class="flip-card-back text-sm">結果</div></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-orange-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-orange-600 mb-2"><i class="ph-fill ph-lightbulb"></i> Think</h3>
+                        <p class="text-xl font-bold text-gray-800"><span class="en-text">Which block checks the result?</span><span class="tw-text">哪個積木在檢查結果？</span></p>
+                    </div>
+                    <div class="bg-sky-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-sky-600 mb-2"><i class="ph-fill ph-chats-circle"></i> Talk</h3>
+                        <p class="text-lg font-bold text-gray-800">The <span class="bg-orange-500 text-white px-2 py-1 rounded">orange</span> block checks the result.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 9: Pair Challenge -->
+            <div class="page absolute inset-0 flex p-6 gap-6 hidden" id="page-9">
+                <div class="w-7/12 bg-mint-100 rounded-3xl p-6 flex flex-col shadow-inner relative overflow-hidden items-center justify-center">
+                    <div class="absolute top-0 right-0 bg-mint-400 text-white px-4 py-1 rounded-bl-xl font-bold">👀 Look</div>
+                    
+                    <div class="flex items-center gap-8 w-full justify-center mt-8">
+                        <!-- Student 1 -->
+                        <div class="flex flex-col items-center relative">
+                            <div class="bg-white p-3 rounded-2xl shadow-lg mb-4 text-center relative border-2 border-mint-200">
+                                <div class="absolute -bottom-3 right-1/2 translate-x-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-mint-200 rotate-45"></div>
+                                <span class="font-bold text-mint-700">My card is 12!</span>
+                            </div>
+                            <span class="text-6xl">👧🏻</span>
+                            <span class="font-bold mt-2">Taiwan</span>
+                        </div>
+
+                        <i class="ph-bold ph-arrows-left-right text-4xl text-gray-400"></i>
+
+                        <!-- Student 2 -->
+                        <div class="flex flex-col items-center relative">
+                            <div class="bg-white p-3 rounded-2xl shadow-lg mb-4 text-center relative border-2 border-sky-200">
+                                <div class="absolute -bottom-3 right-1/2 translate-x-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-sky-200 rotate-45"></div>
+                                <span class="font-bold text-sky-700">Computer is 5.<br>You WIN!</span>
+                            </div>
+                            <span class="text-6xl">👦🏼</span>
+                            <span class="font-bold mt-2">USA</span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="w-5/12 flex flex-col gap-4">
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1">
+                        <h3 class="font-bold text-lg text-gray-500 mb-2"><i class="ph-fill ph-cards text-sky-500"></i> Key Words</h3>
+                        <div class="grid grid-cols-2 gap-3 h-24">
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">play</div><div class="flip-card-back">玩</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">say</div><div class="flip-card-back">說</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">check</div><div class="flip-card-back">檢查</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front">share</div><div class="flip-card-back">分享</div></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-yellow-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-yellow-600 mb-2"><i class="ph-fill ph-lightbulb"></i> Think</h3>
+                        <p class="text-xl font-bold text-gray-800"><span class="en-text">Can you say the result?</span><span class="tw-text">你能說出結果嗎？</span></p>
+                    </div>
+                    <div class="bg-sky-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-sky-600 mb-2"><i class="ph-fill ph-chats-circle"></i> Talk</h3>
+                        <p class="text-md font-bold text-gray-800">My card is ____.<br>Computer's card is ____.<br>I win / lose / tie.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 10: Exit Ticket -->
+            <div class="page absolute inset-0 flex p-6 gap-6 hidden" id="page-10">
+                <div class="w-7/12 bg-sky-100 rounded-3xl p-6 flex flex-col shadow-inner relative overflow-hidden items-center justify-center">
+                    <div class="absolute top-0 right-0 bg-sky-400 text-white px-4 py-1 rounded-bl-xl font-bold">👀 Look</div>
+                    
+                    <div class="text-center mb-6">
+                        <i class="ph-fill ph-medal text-6xl text-yellow-500 drop-shadow-md"></i>
+                        <h2 class="text-2xl font-black text-sky-800 mt-2"><span class="en-text">Great Job!</span><span class="tw-text">做得很棒！</span></h2>
+                    </div>
+
+                    <div class="w-full max-w-md flex flex-col gap-3">
+                        <div class="bg-yellow-100 p-3 rounded-lg shadow-sm border-l-4 border-yellow-400 flex flex-col relative">
+                            <span class="text-xs font-bold text-gray-500 absolute -top-2 left-2 bg-yellow-100 px-1">Today I learned...</span>
+                            <input type="text" id="et-1" class="bg-transparent border-b border-yellow-300 focus:outline-none focus:border-yellow-500 font-bold text-gray-700 w-full mt-2" placeholder="____">
+                        </div>
+                        <div class="bg-mint-100 p-3 rounded-lg shadow-sm border-l-4 border-mint-400 flex flex-col relative">
+                            <span class="text-xs font-bold text-gray-500 absolute -top-2 left-2 bg-mint-100 px-1">One key word is...</span>
+                            <input type="text" id="et-2" class="bg-transparent border-b border-mint-300 focus:outline-none focus:border-mint-500 font-bold text-gray-700 w-full mt-2" placeholder="____">
+                        </div>
+                        <div class="bg-orange-100 p-3 rounded-lg shadow-sm border-l-4 border-orange-400 flex flex-col relative">
+                            <span class="text-xs font-bold text-gray-500 absolute -top-2 left-2 bg-orange-100 px-1">My next step is...</span>
+                            <input type="text" id="et-3" class="bg-transparent border-b border-orange-300 focus:outline-none focus:border-orange-500 font-bold text-gray-700 w-full mt-2" placeholder="____">
+                        </div>
+                        
+                        <button onclick="copyExitTicket()" class="mt-4 bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-xl shadow transition-colors flex items-center justify-center gap-2">
+                            <i class="ph-bold ph-copy"></i> <span class="en-text">Copy Responses</span><span class="tw-text">複製回答</span>
+                        </button>
+                    </div>
+
+                </div>
+                <div class="w-5/12 flex flex-col gap-4">
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1">
+                        <h3 class="font-bold text-lg text-gray-500 mb-2"><i class="ph-fill ph-cards text-sky-500"></i> Key Words</h3>
+                        <div class="grid grid-cols-2 gap-3 h-24">
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">learned</div><div class="flip-card-back text-sm">學到了</div></div></div>
+                            <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">word</div><div class="flip-card-back text-sm">單字</div></div></div>
+                            <div class="flip-card col-span-2" onclick="this.classList.toggle('flipped')"><div class="flip-card-inner"><div class="flip-card-front text-sm">next step</div><div class="flip-card-back text-sm">下一步</div></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-mint-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-mint-600 mb-2"><i class="ph-fill ph-lightbulb"></i> Think</h3>
+                        <p class="text-xl font-bold text-gray-800"><span class="en-text">What did you learn today?</span><span class="tw-text">你今天學到了什麼？</span></p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-3xl shadow-sm flex-1">
+                        <h3 class="font-bold text-lg text-gray-600 mb-2"><i class="ph-fill ph-chalkboard-teacher"></i> Teacher Notes</h3>
+                        <p class="text-sm font-bold text-gray-600"><span class="en-text">Fill in the ticket before you leave!</span><span class="tw-text">離開前請輸入回饋，可點擊複製！</span></p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer / Teacher Notes Toggle & Navigation -->
+        <footer class="h-16 bg-white border-t border-gray-100 flex items-center justify-between px-6 z-20">
+            <!-- Teacher Notes Info -->
+            <div id="teacher-notes-display" class="flex-1 text-sm font-bold text-gray-500 flex items-center gap-2">
+                <i class="ph-fill ph-info text-orange-400 text-xl"></i>
+                <span id="t-note-content">Teacher Notes...</span>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="flex items-center gap-4 ml-4 shrink-0">
+                <button id="btn-prev" onclick="prevPage()" class="bg-gray-100 hover:bg-gray-200 text-gray-600 w-10 h-10 rounded-full flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed">
+                    <i class="ph-bold ph-caret-left text-xl"></i>
+                </button>
+                <span id="page-indicator" class="font-black text-gray-700 w-16 text-center">1 / 10</span>
+                <button id="btn-next" onclick="nextPage()" class="bg-sky-500 hover:bg-sky-600 text-white w-10 h-10 rounded-full flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed shadow-md">
+                    <i class="ph-bold ph-caret-right text-xl"></i>
+                </button>
+            </div>
+        </footer>
+        
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed top-4 right-4 bg-mint-500 text-white px-6 py-3 rounded-xl shadow-lg font-bold transform translate-x-full transition-transform duration-300 z-50">
+        Copied to clipboard! (已複製！)
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const totalPages = 10;
+        let isEnglish = true;
+
+        const teacherNotes = [
+            "Teacher Notes: 先讓臺灣學生與美國學生一起觀察圖片，不急著講程式。",
+            "Teacher Notes: 用數字比較建立共同語言。",
+            "Teacher Notes: 讓學生知道程式其實是在處理「牌上的數字」。",
+            "Teacher Notes: 這頁不要出現程式，只讓學生預測遊戲規則。",
+            "Teacher Notes: 先解釋 random 是隨機，不要放完整程式，只放概念圖。",
+            "Teacher Notes: 先讓學生猜「要做什麼動作才看到牌」。",
+            "Teacher Notes: 這頁用流程圖理解 if，不要先強調程式積木。",
+            "Teacher Notes: 這頁才第一次完整出現程式積木，並用顏色標示不同功能。",
+            "Teacher Notes: 安排跨文化共學，鼓勵學生用短句合作，不要求完整英文長句。",
+            "Teacher Notes: 讓學生輸入回饋，可點擊按鈕複製文字。"
+        ];
+
+        function updateView() {
+            // Update pages visibility
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`page-${currentPage}`).classList.remove('hidden');
+            
+            // Update page indicator
+            document.getElementById('page-indicator').innerText = `${currentPage} / ${totalPages}`;
+            
+            // Update buttons
+            document.getElementById('btn-prev').disabled = currentPage === 1;
+            document.getElementById('btn-next').disabled = currentPage === totalPages;
+
+            // Update Teacher Notes
+            document.getElementById('t-note-content').innerText = teacherNotes[currentPage - 1];
+
+            // Reset specific page interactions when entering
+            if(currentPage === 2) { document.getElementById('p2-ans').classList.remove('opacity-100'); document.getElementById('p2-ans').classList.add('opacity-0'); }
+            if(currentPage === 3) { 
+                document.getElementById('p3-number').classList.remove('opacity-100'); document.getElementById('p3-number').classList.add('opacity-0');
+                document.getElementById('p3-pic').classList.remove('opacity-100'); document.getElementById('p3-pic').classList.add('opacity-0');
+            }
+            if(currentPage === 4) { document.getElementById('p4-res').innerHTML = ''; }
+            if(currentPage === 5) { 
+                document.getElementById('p5-card').innerHTML = '?'; 
+                document.getElementById('p5-card').className = 'bg-gray-100 w-24 h-32 rounded-lg border-2 border-dashed border-gray-400 flex items-center justify-center text-4xl font-black text-gray-300';
+            }
+            if(currentPage === 6) { document.getElementById('p6-card').classList.add('hidden'); }
+        }
+
+        function toggleLanguage() {
+            isEnglish = !isEnglish;
+            const app = document.getElementById('app');
+            if (isEnglish) {
+                app.classList.add('lang-en');
+                app.classList.remove('lang-tw');
+            } else {
+                app.classList.add('lang-tw');
+                app.classList.remove('lang-en');
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updateView();
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateView();
+            }
+        }
+
+        function reveal(id) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.classList.remove('opacity-0');
+                el.classList.add('opacity-100');
+            }
+        }
+
+        function copyExitTicket() {
+            const l1 = document.getElementById('et-1').value || '_____';
+            const l2 = document.getElementById('et-2').value || '_____';
+            const l3 = document.getElementById('et-3').value || '_____';
+            
+            const text = `Today I learned: ${l1}\nOne key word is: ${l2}\nMy next step is: ${l3}`;
+            
+            // Clipboard API fallback
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast();
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // Initialize view
+        updateView();
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextPage();
+            if (e.key === 'ArrowLeft') prevPage();
+        });
+    </script>
+</body>
+</html>
